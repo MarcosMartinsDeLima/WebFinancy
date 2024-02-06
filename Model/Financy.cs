@@ -12,11 +12,11 @@ namespace WebFinancy.Model
         [Column]
         [Required]
         [StringLength(300)]
-        public string Nome {get;set;}
+        public string Nome {get;set;} = string.Empty;
 
         [Column]
         [StringLength(300)]
-        public string Descricao {get;set;}
+        public string Descricao {get;set;} = string.Empty;
 
         [Column]
         [Required]
