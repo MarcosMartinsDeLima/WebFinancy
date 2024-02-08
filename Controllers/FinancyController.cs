@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using WebFinancy.Model;
 using WebFinancy.Repository;
+using WebFinancy.Services;
 
 namespace WebFinancy.Controllers
 {
@@ -10,9 +11,11 @@ namespace WebFinancy.Controllers
     public class FinancyController : ControllerBase
     {
         private IFinancyRepository _financyRepository;
+        private JwtService jwtService;
 
-        public FinancyController(IFinancyRepository financyRepository){
+        public FinancyController(IFinancyRepository financyRepository,JwtService service){
             _financyRepository = financyRepository;
+            jwtService = service;
         }
 
         [HttpGet]
@@ -38,7 +41,9 @@ namespace WebFinancy.Controllers
             
             await _financyRepository.CriarFinancy(financy);
             Response.StatusCode = 201;
-            return new JsonResult(JsonSerializer.Serialize(financy));
+           
+            return Ok(financy);
+            //return new JsonResult(JsonSerializer.Serialize(financy));
         }
 
         [HttpPut]
