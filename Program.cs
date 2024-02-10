@@ -1,8 +1,11 @@
 using System.Text;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using WebFinancy.Config;
+using WebFinancy.Controllers;
 using WebFinancy.Model.Context;
 using WebFinancy.Repository;
 using WebFinancy.Services;
@@ -15,10 +18,17 @@ var builder = WebApplication.CreateBuilder(args);
 var Connection = builder.Configuration["MysqlConnection:MysqlConnectionString"];
 builder.Services.AddDbContext<MysqlContext>(options => options.UseMySql(Connection, new MySqlServerVersion(new Version(8,0,5))) );
 
+//mapper
+builder.Services.AddAutoMapper(typeof(Program));
+IMapper mapper = MapConfig.RegisterMapping().CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 //injetando repositorios
 builder.Services.AddScoped<IFinancyRepository,FinancyRepository>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddTransient<JwtService>();
+builder.Services.AddHttpClient();
 
 //jwt support
 var key = Encoding.ASCII.GetBytes("secretosecretosecretoseraqueagoravaiesperoquesim@34");

@@ -1,5 +1,7 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebFinancy.Data;
 using WebFinancy.Model;
 using WebFinancy.Repository;
 using WebFinancy.Services;
@@ -32,18 +34,20 @@ namespace WebFinancy.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Financy>> CriarFinancy([FromBody]Financy financy){
+        [Authorize]
+        public async Task<ActionResult<Financy>> CriarFinancy([FromBody]FinancyRecord financy){
             //validações
             if(financy.Nome == null) return BadRequest("O nome do controle financeiro é obrigatório!");
             if(financy.Descricao == null) return BadRequest("A Descrição do controle financeiro é obrigatório!");
             if(financy.Valor == null) return BadRequest("O valor do controle financeiro é obrigatório!");
             if(financy.Data == null) return BadRequest("A data do controle financeiro é obrigatório!");
             
-            await _financyRepository.CriarFinancy(financy);
+            var jwt = Request.Headers.Authorization.ToString().Replace("Bearer ",string.Empty);
+
+            await _financyRepository.CriarFinancy(financy,jwt);
             Response.StatusCode = 201;
            
-            return Ok(financy);
-            //return new JsonResult(JsonSerializer.Serialize(financy));
+            return new JsonResult(JsonSerializer.Serialize(financy));
         }
 
         [HttpPut]

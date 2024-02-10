@@ -26,7 +26,7 @@ namespace WebFinancy.Model
         [Required]
         public DateOnly Data {get;set;}
 
-        public User User{get;set;}
-        public int IdUser {get;set;}
+        public User? User{get;set;}
+        public int? IdUser {get;set;}
     }
 }

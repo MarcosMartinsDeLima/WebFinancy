@@ -43,5 +43,10 @@ namespace WebFinancy.Repository
             return user;
         }
 
+        public async Task<User> AcharUserPorEmail(string email)
+        {
+            var user = await _context.User.Where(u => u.Email == email).FirstOrDefaultAsync();
+            return user;
+        }
     }
 }

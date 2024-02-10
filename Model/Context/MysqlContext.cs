@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WebFinancy.Data;
 
 namespace WebFinancy.Model.Context
 {

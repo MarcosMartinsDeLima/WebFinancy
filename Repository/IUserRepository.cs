@@ -8,5 +8,6 @@ namespace WebFinancy.Repository
         Task<User> CriarUser(User user);
         Task<User> AtualizarUser(User user);
         Task<bool> ApagarUser(int id);
+        Task<User> AcharUserPorEmail(string email);
     }
 }
