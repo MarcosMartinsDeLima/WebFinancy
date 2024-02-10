@@ -1,17 +1,24 @@
 
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using WebFinancy.Data;
 using WebFinancy.Model;
 using WebFinancy.Model.Context;
+using WebFinancy.Services;
 
 namespace WebFinancy.Repository
 {
     public class FinancyRepository : IFinancyRepository
     {
         private readonly MysqlContext _context;
+        private readonly IMapper _mapper;
+        private readonly JwtService jwtService;
 
-        public FinancyRepository(MysqlContext context){
+        public FinancyRepository(MysqlContext context,IMapper mapper,JwtService jwtServices){
             _context = context;
+            _mapper = mapper;
+            jwtService = jwtServices;
         }
 
         public async Task<Financy> AtualizarFinancy(Financy financy)
@@ -21,8 +28,13 @@ namespace WebFinancy.Repository
             return financy;
         }
 
-        public async Task<Financy> CriarFinancy(Financy financy)
+        public async Task<Financy> CriarFinancy(FinancyRecord financyDto,string jwt)
         {
+            var user = await jwtService.PegarUsuarioPorToken(jwt);
+            Financy financy = _mapper.Map<Financy>(financyDto);
+            financy.User = user;
+            financy.IdUser = user.IdUser;
+            financy.User.financies = new List<Financy>();
             _context.Add(financy);
             await _context.SaveChangesAsync();
             return financy;
