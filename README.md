@@ -15,6 +15,16 @@ as tecnologias usadas foram:
 
 ## EndPoints  (URL base: http://localhost:5176)
 
+### -User
+`Criar user`
+
+`POST` api/user/criar
+
+`Fazer Login`
+
+`POST` api/user/login
+
+
 ### -Financy
 
 `(Resgatar todas as financies)`
@@ -45,11 +55,3 @@ as tecnologias usadas foram:
 
 `GET` api/FinancyBalance/maior
 
-### -User
-`Criar user`
-
-`POST` api/user/criar
-
-`Fazer Login`
-
-`POST` api/user/login
