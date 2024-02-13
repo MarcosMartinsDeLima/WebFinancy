@@ -55,6 +55,14 @@ Este é uma api rest em asp net para controle finançeiro, onde pode criar um us
 
 `DELETE` api/Financy/{id}
 
+`(Resgatar financy mais nova)`
+
+`GET` api/Financy/nova
+
+`(Resgatar financy mais antiga)`
+
+`GET` api/Financy/antiga 
+
 `(Resgatar total de gastos)`
 
 `GET` api/FinancyBalance/total

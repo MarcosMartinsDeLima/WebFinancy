@@ -15,6 +15,8 @@ namespace WebFinancy.Repository
         Task<ShowFinancyDto> ListarMenorFinancy(string jwt);
         Task<List<ShowFinancyDto>> ListarDispesas(string jwt);
         Task<List<ShowFinancyDto>> ListarReceitas(string jwt);
+        Task<ShowFinancyDto> MostrarFinancyMaisAntiga(string jwt);
+        Task<ShowFinancyDto> MostrarFinancyMaisNova(string jwt);
 
     }
 }

@@ -144,5 +144,39 @@ namespace WebFinancy.Repository
             return financiesDto;
 
         }
+
+        public async Task<ShowFinancyDto> MostrarFinancyMaisAntiga(string jwt){
+            var user = await jwtService.PegarUsuarioPorToken(jwt);
+            List<Financy> financies = await _context.Financy.Where(f => f.IdUser == user.IdUser).ToListAsync();
+            Financy financy = await _context.Financy.FirstOrDefaultAsync();
+            DateOnly date = financy.Data;
+            
+            foreach(var i in financies){
+                if(i.Data < date){
+                    financy = i;
+                    date = i.Data;
+                }
+            }
+
+            ShowFinancyDto showFinancyDto = new ShowFinancyDto(financy.Nome,financy.Descricao,financy.Valor,financy.Data);
+            return showFinancyDto;
+        }
+
+          public async Task<ShowFinancyDto> MostrarFinancyMaisNova(string jwt){
+            var user = await jwtService.PegarUsuarioPorToken(jwt);
+            List<Financy> financies = await _context.Financy.Where(f => f.IdUser == user.IdUser).ToListAsync();
+            Financy financy = await _context.Financy.FirstOrDefaultAsync();
+            DateOnly date = financy.Data;
+            
+            foreach(var i in financies){
+                if(i.Data > date){
+                    financy = i;
+                    date = i.Data;
+                }
+            }
+
+            ShowFinancyDto showFinancyDto = new ShowFinancyDto(financy.Nome,financy.Descricao,financy.Valor,financy.Data);
+            return showFinancyDto;
+        }
     }
 }

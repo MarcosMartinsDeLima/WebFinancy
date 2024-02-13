@@ -55,17 +55,45 @@ namespace WebFinancy.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<ActionResult<Financy>> AtualizarFinancy([FromBody]Financy financy){
             await _financyRepository.AtualizarFinancy(financy);
             return Ok(financy);
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult> DeletarFinancy(int id){
             var jwt = Request.Headers.Authorization.ToString().Replace("Bearer ",string.Empty);
             var status = await _financyRepository.RemoverFinancy(id,jwt);
+
             if(!status) return BadRequest("Não foi possivel apagar esse financy");
+
             return Ok("Financy apagada");
+        }
+
+        [HttpGet("nova")]
+        [Authorize]
+        public async Task<ActionResult<ShowFinancyDto>> MostrarFinancyMaisNova(){
+            var jwt = Request.Headers.Authorization.ToString().Replace("Bearer ",string.Empty);
+            ShowFinancyDto showFinancyDto = await _financyRepository.MostrarFinancyMaisNova(jwt);
+
+            if(showFinancyDto == null) return NotFound();
+
+            return Ok(showFinancyDto);
+
+        }
+
+        [HttpGet("antiga")]
+        [Authorize]
+        public async Task<ActionResult<ShowFinancyDto>> MostrarFinancyMaisAntiga(){
+            var jwt = Request.Headers.Authorization.ToString().Replace("Bearer ",string.Empty);
+            ShowFinancyDto showFinancyDto = await _financyRepository.MostrarFinancyMaisAntiga(jwt);
+
+            if(showFinancyDto == null) return NotFound();
+
+            return Ok(showFinancyDto);
+
         }
     }
 }
