@@ -1,11 +1,11 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using WebFinancy.Config;
-using WebFinancy.Controllers;
 using WebFinancy.Model.Context;
 using WebFinancy.Repository;
 using WebFinancy.Services;
@@ -49,7 +49,8 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+   x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);;
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>{ 

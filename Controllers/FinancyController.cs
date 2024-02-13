@@ -21,14 +21,18 @@ namespace WebFinancy.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Financy>>> ListarFinancies(){
-            var Financy = await _financyRepository.ListarFinancies();
+            var jwt = Request.Headers.Authorization.ToString().Replace("Bearer ",string.Empty);
+            var Financy = await _financyRepository.ListarFinancies(jwt);
             return Ok(Financy);
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Financy>> ListarFinancyPorId(int id){
-            var financy = await _financyRepository.ListarFinancyPorId(id);
+            var jwt = Request.Headers.Authorization.ToString().Replace("Bearer ",string.Empty);
+            var financy = await _financyRepository.ListarFinancyPorId(id,jwt);
             if(financy == null) return NotFound("Não foi encontrado um controle financeiro!");
             return Ok(financy);
         }
@@ -58,7 +62,8 @@ namespace WebFinancy.Controllers
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletarFinancy(int id){
-            var status = await _financyRepository.RemoverFinancy(id);
+            var jwt = Request.Headers.Authorization.ToString().Replace("Bearer ",string.Empty);
+            var status = await _financyRepository.RemoverFinancy(id,jwt);
             if(!status) return BadRequest("Não foi possivel apagar esse financy");
             return Ok("Financy apagada");
         }

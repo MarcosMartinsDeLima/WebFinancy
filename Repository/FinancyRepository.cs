@@ -40,29 +40,34 @@ namespace WebFinancy.Repository
             return financy;
         }
 
-        public async Task<IEnumerable<Financy>> ListarFinancies()
+        public async Task<IEnumerable<Financy>> ListarFinancies(string jwt)
         {
-           List<Financy> financies = await _context.Financy.ToListAsync();
-           return financies;
+            var user = await jwtService.PegarUsuarioPorToken(jwt);
+            List<Financy> financies = await _context.Financy.Where(f => f.IdUser == user.IdUser).ToListAsync();
+            return financies;
         }
 
-        public async Task<Financy> ListarFinancyPorId(int id)
+        public async Task<Financy> ListarFinancyPorId(int id,string jwt)
         {
-            Financy financy = await _context.Financy.Where(f => f.id == id).FirstOrDefaultAsync();
+            var user = await jwtService.PegarUsuarioPorToken(jwt);
+            Financy financy = await _context.Financy.Where(f => f.id == id && f.IdUser == user.IdUser).FirstOrDefaultAsync();
             return financy;
         }
 
-        public async Task<bool> RemoverFinancy(int id)
+        public async Task<bool> RemoverFinancy(int id,string jwt)
         {
-            Financy financy = await _context.Financy.Where(f => f.id == id).FirstOrDefaultAsync();
+            var user = await jwtService.PegarUsuarioPorToken(jwt);
+            Financy financy = await _context.Financy.Where(f => f.id == id && f.IdUser == user.IdUser).FirstOrDefaultAsync();
             if(financy == null) return false;
             _context.Remove(financy);
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<float> ListarValorAoTodo(){
-            List<Financy> financies = await _context.Financy.ToListAsync();
+        public async Task<float> ListarValorAoTodo(string jwt){
+
+            var user = await jwtService.PegarUsuarioPorToken(jwt);
+            List<Financy> financies = await _context.Financy.Where(f => f.IdUser == user.IdUser).ToListAsync();
             float ValorTotal= 0;
             foreach(var i in financies){
                ValorTotal+= i.Valor; 
@@ -70,17 +75,74 @@ namespace WebFinancy.Repository
             return ValorTotal;
         }
 
-        public async Task<Financy> ListarMaiorFinancy(){
-            List<Financy> financies = await _context.Financy.ToListAsync();
+        public async Task<ShowFinancyDto> ListarMaiorFinancy(string jwt){
+
+            var user = await jwtService.PegarUsuarioPorToken(jwt);
+            List<Financy> financies = await _context.Financy.Where(f => f.IdUser == user.IdUser).ToListAsync();
             Financy financy = await _context.Financy.FirstOrDefaultAsync();
             float valor = 0;
+
             foreach(var i in financies){
                 if(i.Valor >= valor){
                     financy = i;
                     valor = i.Valor;
                 }
             }
-            return financy;
+
+            ShowFinancyDto financyDto = new ShowFinancyDto(financy.Nome,financy.Descricao,financy.Valor,financy.Data);
+            return financyDto;
+        }
+
+        public async Task<ShowFinancyDto> ListarMenorFinancy(string jwt){
+
+            var user = await jwtService.PegarUsuarioPorToken(jwt);
+            List<Financy> financies = await _context.Financy.Where(f => f.IdUser == user.IdUser).ToListAsync();
+            Financy financy = await _context.Financy.FirstOrDefaultAsync();
+            float valor = financy.Valor;
+
+            foreach(var i in financies){
+                if(i.Valor <= valor){
+                    financy = i;
+                    valor = i.Valor;
+                }
+            }
+
+            ShowFinancyDto financyDto = new ShowFinancyDto(financy.Nome,financy.Descricao,financy.Valor,financy.Data);
+            return financyDto;
+        }
+
+        public async Task<List<ShowFinancyDto>> ListarDispesas(string jwt){
+
+            var user = await jwtService.PegarUsuarioPorToken(jwt);
+            List<Financy> financies = await _context.Financy.Where(f => f.IdUser == user.IdUser).ToListAsync();
+            List<ShowFinancyDto> financiesDto = new List<ShowFinancyDto>();
+
+            foreach(var i in financies){
+                if(i.Valor < 0){
+                    //instanciamos a record show financyDto para podemos adicionar ela na lista 
+                    ShowFinancyDto showFinancyDto = new ShowFinancyDto(i.Nome,i.Descricao,i.Valor,i.Data);
+                    financiesDto.Add(showFinancyDto);
+                }
+            }
+        
+            return financiesDto;
+
+        }
+
+        public async Task<List<ShowFinancyDto>> ListarReceitas(string jwt){
+            var user = await jwtService.PegarUsuarioPorToken(jwt);
+            List<Financy> financies = await _context.Financy.Where(f => f.IdUser == user.IdUser).ToListAsync();
+            List<ShowFinancyDto> financiesDto = new List<ShowFinancyDto>();
+
+            foreach(var i in financies){
+                if(i.Valor > 0){
+                    //instanciamos a record show financyDto para podemos adicionar ela na lista 
+                    ShowFinancyDto showFinancyDto = new ShowFinancyDto(i.Nome,i.Descricao,i.Valor,i.Data);
+                    financiesDto.Add(showFinancyDto);
+                }
+            }
+            return financiesDto;
+
         }
     }
 }
