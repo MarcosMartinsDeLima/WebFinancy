@@ -41,10 +41,25 @@ namespace WebFinancy.Controllers
             
             //validação se a senha bate
             if(conta.Result.Senha != loginDto.senha)  return UnprocessableEntity("Senha invalida");
-            Console.WriteLine(conta.Result);
+           
             var token = _jwtService.GerarToken(conta.Result);
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bareare",token);
             return Ok(token);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<User>> AtualizarUser(User user){
+            var User = await _userRepository.AtualizarUser(user);
+            return User;
+        }
+
+        [HttpDelete("id")]
+        public async Task<ActionResult<bool>> DeletarUser([FromBody] int id){
+            var User = await _userRepository.ApagarUser(id);
+            
+            if(!User) return BadRequest("Não foi possivel apagar User!");
+
+            return NoContent();
         }
     }
 }
