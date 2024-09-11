@@ -30,19 +30,19 @@ namespace WebFinancy.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult<string> Login([FromBody] LoginDto loginDto){
+        public async Task<ActionResult<string>> LoginAsync([FromBody] LoginDto loginDto){
             //validação se veio email e senha
             if(loginDto.email == null) return BadRequest("Email é obrigatório");
             if(loginDto.senha == null) return BadRequest("Senha é obrigatória");
 
             //validação se a conta já existe
-            var conta = _userRepository.AcharUserPorEmail(loginDto.email);
+            var conta =  await _userRepository.AcharUserPorEmail(loginDto.email);
             if(conta == null) return NotFound("Não existe uma conta com esse nome!");
             
             //validação se a senha bate
-            if(conta.Result.Senha != loginDto.senha)  return UnprocessableEntity("Senha invalida");
+            if(conta.Senha != loginDto.senha)  return UnprocessableEntity("Senha invalida");
            
-            var token = _jwtService.GerarToken(conta.Result);
+            var token = _jwtService.GerarToken(conta);
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bareare",token);
             return Ok(token);
         }

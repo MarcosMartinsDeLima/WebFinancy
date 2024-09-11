@@ -49,6 +49,9 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+
+
+
 builder.Services.AddControllers().AddJsonOptions(x =>
    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);;
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -81,12 +84,18 @@ builder.Services.AddSwaggerGen(c =>{
 
 var app = builder.Build();
 
+//cors
+app.UseCors(builder => builder
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed((host) => true)
+                .AllowCredentials()
+            );
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 
 app.UseHttpsRedirection();
 
@@ -95,3 +104,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+// Make the implicit Program class public so test projects can access it
+public partial class Program { }
